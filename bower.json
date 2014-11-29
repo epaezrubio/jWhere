@@ -1,0 +1,31 @@
+{
+    "name": "jWhere",
+    "version": "0.0.0",
+    "authors": [
+        "Eduardo Paez <epaezrubio@gmail.com>"
+    ],
+    "description": "Filter jQuery sets.",
+    "main": "jquery.jwhere.js",
+    "keywords": [
+        "jquery",
+        "filter",
+        "where",
+        "jwhere",
+        "selector"
+    ],
+    "license": "MIT",
+    "homepage": "http://jwhere.devpaezrubio.com",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "jquery": "~2.1.1"
+    },
+    "devDependencies": {
+        "qunit": "~1.15.0"
+    }
+}
