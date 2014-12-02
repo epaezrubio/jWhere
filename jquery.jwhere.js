@@ -31,6 +31,25 @@
             testFunction: function ($element, fn) {
                 return fn($element.text())
             }
+        },
+        "css": {
+            testKeyValue: function ($element, object) {
+                return $element.css(object.key) == object.value;
+            },
+            testKeyValueFn: function ($element, object) {
+                return object.value($element.css(object.key));
+            }
+        },
+        "data": {
+            testKeyValue: function ($element, object) {
+                return $element.data(object.key) == object.value;
+            },
+            testKeyRegexp: function ($element, object) {
+                return ("" + $element.data(object.key)).match(object.value)
+            },
+            testKeyValueFn: function ($element, object) {
+                return object.value($element.data(object.key));
+            }
         }
     }, getAssertionFunction = function (key, assertion) {
 
@@ -46,12 +65,21 @@
             return filterSuites[key].testRegexp;
         }
 
-        if (assertion.key && assertion.value) {
-            return filterSuites[key].testKeyValue;
-        }
-
         if (assertion.prototype && assertion.prototype.constructor) {
             return filterSuites[key].testFunction;
+        }
+
+        if (assertion.key && assertion.value) {
+
+            if (assertion.value.prototype && assertion.value.prototype.constructor) {
+                return filterSuites[key].testKeyValueFn;
+            }
+
+            if (assertion.value.compile) {
+                return filterSuites[key].testKeyRegexp;
+            }
+
+            return filterSuites[key].testKeyValue;
         }
 
         return null;
