@@ -50,6 +50,22 @@
             testKeyValueFn: function ($element, object) {
                 return object.value($element.data(object.key));
             }
+        },
+        "width": {
+            testNumber: function ($element, number) {
+                return $element.width() === number;
+            },
+            testFunction: function ($element, fn) {
+                return fn($element.width())
+            }
+        },
+        "height": {
+            testNumber: function ($element, number) {
+                return $element.height() === number;
+            },
+            testFunction: function ($element, fn) {
+                return fn($element.height())
+            }
         }
     }, getAssertionFunction = function (key, assertion) {
 
@@ -59,6 +75,10 @@
 
         if ((assertion === "" + assertion) && assertion.indexOf) {
             return filterSuites[key].testString;
+        }
+
+        if (assertion + 0 === assertion) {
+            return filterSuites[key].testNumber;
         }
 
         if (assertion.compile) {
