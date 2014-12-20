@@ -3,7 +3,7 @@
     "use strict";
 
     QUnit.module("data");
-    QUnit.test("should accept key/value, kez/regex key/function", function (assert) {
+    QUnit.test("should accept key/value, key/regex key/function", function (assert) {
         var $elem = $("<div>");
 
         $elem.where({

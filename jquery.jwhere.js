@@ -108,26 +108,40 @@
 
     $.fn.where = function (filters) {
 
-        var result = [];
+        //TODO: apply filters on already filtered elements
+        var result = this.toArray(),
+            filterSet = filters;
 
-        this.each(function (i, element) {
+        if (!(filterSet && typeof filterSet == 'object' && typeof filterSet.length == 'number' &&
+            toString.call(filterSet) == "[object Array]" || false)) {
+            filterSet = [filterSet];
+        }
 
-            $.each(filters, function (key, assertion) {
 
-                var assertionFunction = getAssertionFunction(key, assertion),
+        $.each(filterSet, function (index, filter) {
+
+            for (var i = 0; i < result.length; i++) {
+                var element = result[i];
+
+                var filterKey = Object.keys(filter)[0],
+                    filterAssertion = filter[filterKey];
+
+                var assertionFunction = getAssertionFunction(filterKey, filterAssertion),
                     $element = $(element);
 
                 if (!assertionFunction) {
-                    throw new Error("Assertion for filter " + key + " is unknown");
+                    throw new Error("Assertion for filter " + filterKey + " is unknown");
                 }
 
-                if (assertionFunction($element, assertion)) {
-                    result.push($element)
+                if (!assertionFunction($element, filterAssertion)) {
+                    result.splice(result.indexOf(element), 1);
+                    i = i - 1;
                 }
 
-            });
+            }
 
         });
+
 
         return $(result);
 
