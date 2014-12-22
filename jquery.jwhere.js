@@ -68,7 +68,7 @@
             "innerWidth": fnGroupsObjects.numberFunctionObject("innerWidth"),
             "css": fnGroupsObjects.keyValuekeyRegexpKeyFn("css"),
             "data": fnGroupsObjects.keyValuekeyRegexpKeyFn("data"),
-            "children": fnGroupsObjects.numberCountFn("parents"),
+            "children": fnGroupsObjects.numberCountFn("children"),
             "siblings": fnGroupsObjects.numberCountFn("siblings"),
             "parents": fnGroupsObjects.numberCountFn("parents")
         }, getAssertionFunction = function (key, assertion) {
