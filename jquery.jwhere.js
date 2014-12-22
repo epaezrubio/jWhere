@@ -68,8 +68,9 @@
             "innerWidth": fnGroupsObjects.numberFunctionObject("innerWidth"),
             "css": fnGroupsObjects.keyValuekeyRegexpKeyFn("css"),
             "data": fnGroupsObjects.keyValuekeyRegexpKeyFn("data"),
-            "children": fnGroupsObjects.numberCountFn("siblings"),
-            "siblings": fnGroupsObjects.numberCountFn("siblings")
+            "children": fnGroupsObjects.numberCountFn("parents"),
+            "siblings": fnGroupsObjects.numberCountFn("siblings"),
+            "parents": fnGroupsObjects.numberCountFn("parents")
         }, getAssertionFunction = function (key, assertion) {
 
             if (!key || !filterSuites[key]) {
