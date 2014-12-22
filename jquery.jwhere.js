@@ -45,6 +45,16 @@
                         return object.value($element[testProp](object.key));
                     }
                 }
+            },
+            numberCountFn: function (testProp) {
+                return {
+                    testNumber: function ($element, number) {
+                        return $element[testProp]().length === number;
+                    },
+                    testFunction: function ($element, fn) {
+                        return fn($element[testProp]())
+                    }
+                }
             }
         },
         filterSuites = {
@@ -58,14 +68,8 @@
             "innerWidth": fnGroupsObjects.numberFunctionObject("innerWidth"),
             "css": fnGroupsObjects.keyValuekeyRegexpKeyFn("css"),
             "data": fnGroupsObjects.keyValuekeyRegexpKeyFn("data"),
-            "children": {
-                testNumber: function ($element, number) {
-                    return $element.children().length === number;
-                },
-                testFunction: function ($element, fn) {
-                    return fn($element.children())
-                }
-            }
+            "children": fnGroupsObjects.numberCountFn("siblings"),
+            "siblings": fnGroupsObjects.numberCountFn("siblings")
         }, getAssertionFunction = function (key, assertion) {
 
             if (!key || !filterSuites[key]) {
