@@ -47,7 +47,7 @@
         </div>
     </div>
 </div>
-<div id="service">
+<div id="howto" class="page-section">
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-sm-offset-2">
@@ -74,7 +74,243 @@ $(elements).css("color", "red");</code></pre>
     </div>
 </div>
 
-<div id="cwrap">
+<div id="supported" class="page-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-sm-offset-2">
+                <h3 class="centered">What can jWhere do</h3>
+                <p>With jWhere you can filter a set of DOM elements based on it's properties or what elements are near to it.
+                Depending on what to check, you should use a pair of key/value or maybe evaluate arbitrary things using a anonymous
+                function pattern. Check the following examples:</p>
+
+                <h4 class="subtitle">String</h4>
+
+                <div class="code-snippet">
+<pre><code class="language-javascript">$("li").where({
+    text: "Lorem ipsum"
+});</code></pre>
+                </div>
+
+                <h4 class="subtitle">Numbers</h4>
+
+                    <div class="code-snippet">
+<pre><code class="language-javascript">$("li").where({
+    width: 200
+});</code></pre>
+                    </div>
+
+                    <h4 class="subtitle">Regexp</h4>
+
+                    <div class="code-snippet">
+<pre><code class="language-javascript">$("li").where({
+    text: new RegExp(".*ipsum.*")
+});</code></pre>
+                    </div>
+                    <h4 class="subtitle">Function</h4>
+
+                    <div class="code-snippet">
+<pre><code class="language-javascript">$("li").where({
+    text: function (value) {
+        // non-true returns will be discarted in the filter
+        return parseInt(value) > 10;
+    }
+});</code></pre>
+                    </div>
+                        <h4 class="subtitle">Key/Something</h4>
+
+                        <div class="code-snippet">
+<pre><code class="language-javascript">$("li").where({
+    css: {
+        key: "display",
+        value: "list-item"
+    }
+});</code></pre>
+                            </div>
+                            <div class="code-snippet">
+<pre><code class="language-javascript">$("li").where({
+    css: {
+        key: "display",
+        value: function (value) {
+            return value !== "list-item";
+        }
+    }
+});</code></pre>
+                        </div>
+                <h4 class="subtitle">Grouping</h4>
+
+                <div class="code-snippet">
+<pre><code class="language-javascript">$("li").where([{
+    text: function (value) {
+        return parseInt(value) > 10;
+    },
+    css: {
+        key: "display",
+        value: function (value) {
+            return value !== "none"
+        }
+    }
+}]);</code></pre>
+                </div>
+                    <br />
+                    <h3 class="centered">Which properties support what filters</h3>
+                            <table class="comparison-table table table-striped table-bordered">
+                                <tr>
+                                    <th></th>
+                                    <th>Number</th>
+                                    <th>String</th>
+                                    <th>Regex</th>
+                                    <th>Function</th>
+                                    <th>Key/String</th>
+                                    <th>Key/Regex</th>
+                                    <th>Key/Function</th>
+                                </tr>
+                                <tr>
+                                    <td class="property">html</td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">text</td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">width</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">height</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">outerHeight</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">innerHeight</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">outerWidth</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">innerWidth</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">css</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">data</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">children</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">siblings</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">parents</td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th>Number</th>
+                                    <th>String</th>
+                                    <th>Regex</th>
+                                    <th>Function</th>
+                                    <th>Key/String</th>
+                                    <th>Key/Regex</th>
+                                    <th>Key/Function</th>
+                                </tr>
+                            </table>
+                </div>
+        </div>
+    </div>
+</div>
+
+<div id="cwrap" class="page-section">
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-sm-offset-2">
@@ -93,8 +329,7 @@ $(elements).css("color", "red");</code></pre>
     </div>
 </div>
 
-<div id="footerwrap">
-</div>
+<div id="footerwrap"></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="statics/js/prism.js"></script>
