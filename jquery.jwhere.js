@@ -66,6 +66,38 @@
             testFunction: function ($element, fn) {
                 return fn($element.height())
             }
+        },
+        "outerHeight": {
+            testNumber: function ($element, number) {
+                return $element.outerHeight() === number;
+            },
+            testFunction: function ($element, fn) {
+                return fn($element.innerHeight())
+            }
+        },
+        "innerHeight": {
+            testNumber: function ($element, number) {
+                return $element.innerHeight() === number;
+            },
+            testFunction: function ($element, fn) {
+                return fn($element.innerHeight())
+            }
+        },
+        "outerWidth": {
+            testNumber: function ($element, number) {
+                return $element.outerWidth() === number;
+            },
+            testFunction: function ($element, fn) {
+                return fn($element.innerWidth())
+            }
+        },
+        "innerWidth": {
+            testNumber: function ($element, number) {
+                return $element.innerWidth() === number;
+            },
+            testFunction: function ($element, fn) {
+                return fn($element.innerWidth())
+            }
         }
     }, getAssertionFunction = function (key, assertion) {
 
@@ -108,7 +140,6 @@
 
     $.fn.where = function (filters) {
 
-        //TODO: apply filters on already filtered elements
         var result = this.toArray(),
             filterSet = filters;
 
