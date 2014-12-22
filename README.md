@@ -1,6 +1,6 @@
 # jWhere
 
-jWhere is a jQuery plugin useful to avoid the tedious task of using iterators to check conditions in a given set of elements.
+[jWhere](http://jwhere.devpaezrubio.com) is a jQuery plugin useful to avoid the tedious task of using iterators to check conditions in a given set of elements.
 
 For example, imagine that you want to change the color of some `<li>` based on a regex matching its content. In traditional jQuery you should do something like:
 
@@ -22,3 +22,4 @@ $("li").where({
 }).css("color", "red");
 ```
 
+Visit the [jWhere site](http://jwhere.devpaezrubio.com) to learn more.
