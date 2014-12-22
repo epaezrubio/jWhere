@@ -98,6 +98,14 @@
             testFunction: function ($element, fn) {
                 return fn($element.innerWidth())
             }
+        },
+        "children": {
+            testNumber: function ($element, number) {
+                return $element.children().length === number;
+            },
+            testFunction: function ($element, fn) {
+                return fn($element.children())
+            }
         }
     }, getAssertionFunction = function (key, assertion) {
 
