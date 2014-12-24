@@ -9,106 +9,126 @@
 
     "use strict";
 
-    var fnGroupsObjects = {
-            numberFunctionObject: function (testProp) {
-                return {
-                    testNumber: function ($element, number) {
-                        return $element[testProp]() === number;
-                    },
-                    testFunction: function ($element, fn) {
-                        return fn($element[testProp]())
-                    }
-                }
-            },
-            stringRegexpFunctionObject: function(testProp) {
-                return {
-                    testString: function ($element, string) {
-                        return $element[testProp]() === string;
-                    },
-                    testRegexp: function ($element, regexp) {
-                        return $element[testProp]().match(regexp);
-                    },
-                    testFunction: function ($element, fn) {
-                        return fn($element[testProp]())
-                    }
-                }
-            },
-            keyValuekeyRegexpKeyFn: function (testProp) {
-                return {
-                    testKeyValue: function ($element, object) {
-                        return $element[testProp](object.key) == object.value;
-                    },
-                    testKeyRegexp: function ($element, object) {
-                        return ("" + $element[testProp](object.key)).match(object.value)
-                    },
-                    testKeyValueFn: function ($element, object) {
-                        return object.value($element[testProp](object.key));
-                    }
-                }
-            },
-            numberCountFn: function (testProp) {
-                return {
-                    testNumber: function ($element, number) {
-                        return $element[testProp]().length === number;
-                    },
-                    testFunction: function ($element, fn) {
-                        return fn($element[testProp]())
-                    }
-                }
-            }
-        },
-        filterSuites = {
-            "html": fnGroupsObjects.stringRegexpFunctionObject("html"),
-            "text": fnGroupsObjects.stringRegexpFunctionObject("text"),
-            "width": fnGroupsObjects.numberFunctionObject("width"),
-            "height": fnGroupsObjects.numberFunctionObject("height"),
-            "outerHeight": fnGroupsObjects.numberFunctionObject("outerHeight"),
-            "innerHeight": fnGroupsObjects.numberFunctionObject("innerHeight"),
-            "outerWidth": fnGroupsObjects.numberFunctionObject("outerWidth"),
-            "innerWidth": fnGroupsObjects.numberFunctionObject("innerWidth"),
-            "css": fnGroupsObjects.keyValuekeyRegexpKeyFn("css"),
-            "data": fnGroupsObjects.keyValuekeyRegexpKeyFn("data"),
-            "children": fnGroupsObjects.numberCountFn("children"),
-            "siblings": fnGroupsObjects.numberCountFn("siblings"),
-            "parents": fnGroupsObjects.numberCountFn("parents")
-        }, getAssertionFunction = function (key, assertion) {
+    var fnGroupsObjectBuilder = function (testProp) {
+        this.testProp = testProp;
+    };
 
-            if (!key || !filterSuites[key]) {
-                return null;
-            }
-
-            if ((assertion === "" + assertion) && assertion.indexOf) {
-                return filterSuites[key].testString;
-            }
-
-            if (assertion + 0 === assertion) {
-                return filterSuites[key].testNumber;
-            }
-
-            if (assertion.compile) {
-                return filterSuites[key].testRegexp;
-            }
-
-            if (assertion.prototype && assertion.prototype.constructor) {
-                return filterSuites[key].testFunction;
-            }
-
-            if (assertion.key && assertion.value) {
-
-                if (assertion.value.prototype && assertion.value.prototype.constructor) {
-                    return filterSuites[key].testKeyValueFn;
-                }
-
-                if (assertion.value.compile) {
-                    return filterSuites[key].testKeyRegexp;
-                }
-
-                return filterSuites[key].testKeyValue;
-            }
-
-            return null;
-
+    fnGroupsObjectBuilder.prototype.allowText = function () {
+        var testProp = this.testProp;
+        this.testString = function ($element, number) {
+            return $element[testProp]() === number;
         };
+        return this;
+    };
+
+    fnGroupsObjectBuilder.prototype.allowNumber = function () {
+        var testProp = this.testProp;
+        this.testNumber = function ($element, number) {
+            return parseInt($element[testProp]()) === number;
+        };
+        return this;
+    };
+
+    fnGroupsObjectBuilder.prototype.allowCount = function () {
+        var testProp = this.testProp;
+        this.testNumber = function ($element, number) {
+            return $element[testProp]().length === number;
+        };
+        return this;
+    };
+
+    fnGroupsObjectBuilder.prototype.allowFunction = function () {
+        var testProp = this.testProp;
+        this.testFunction = function ($element, fn) {
+            return fn($element[testProp]())
+        };
+        return this;
+    };
+
+    fnGroupsObjectBuilder.prototype.allowRegex = function () {
+        var testProp = this.testProp;
+        this.testRegexp = function ($element, regexp) {
+            return $element[testProp]().match(regexp);
+        };
+        return this;
+    };
+
+    fnGroupsObjectBuilder.prototype.allowKeyValue = function () {
+        var testProp = this.testProp;
+        this.testKeyValue = function ($element, object) {
+            return $element[testProp](object.key) == object.value;
+        };
+        return this;
+    };
+
+    fnGroupsObjectBuilder.prototype.allowKeyValueFunction = function () {
+        var testProp = this.testProp;
+        this.testKeyValueFn = function ($element, object) {
+            return object.value($element[testProp](object.key));
+        };
+        return this;
+    };
+
+    fnGroupsObjectBuilder.prototype.allowKeyValueRegex = function () {
+        var testProp = this.testProp;
+        this.testKeyRegexp = function ($element, object) {
+            return ("" + $element[testProp](object.key)).match(object.value)
+        };
+        return this;
+    };
+
+    var filterSuites = {
+        "html": new fnGroupsObjectBuilder("html").allowFunction().allowText().allowRegex(),
+        "text": new fnGroupsObjectBuilder("text").allowFunction().allowText().allowRegex(),
+        "width": new fnGroupsObjectBuilder("width").allowNumber().allowFunction(),
+        "height": new fnGroupsObjectBuilder("height").allowNumber().allowFunction(),
+        "outerHeight": new fnGroupsObjectBuilder("outerHeight").allowNumber().allowFunction(),
+        "innerHeight": new fnGroupsObjectBuilder("innerHeight").allowNumber().allowFunction(),
+        "outerWidth": new fnGroupsObjectBuilder("outerWidth").allowNumber().allowFunction(),
+        "innerWidth": new fnGroupsObjectBuilder("innerWidth").allowNumber().allowFunction(),
+        "css": new fnGroupsObjectBuilder("css").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex(),
+        "data": new fnGroupsObjectBuilder("data").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex(),
+        "children": new fnGroupsObjectBuilder("children").allowFunction().allowCount(),
+        "siblings": new fnGroupsObjectBuilder("siblings").allowFunction().allowCount(),
+        "parents": new fnGroupsObjectBuilder("parents").allowFunction().allowCount()
+    }, getAssertionFunction = function (key, assertion) {
+
+        if (!key || !filterSuites[key]) {
+            return null;
+        }
+
+        if ((assertion === "" + assertion) && assertion.indexOf) {
+            return filterSuites[key].testString;
+        }
+
+        if (assertion + 0 === assertion) {
+            return filterSuites[key].testNumber;
+        }
+
+        if (assertion.compile) {
+            return filterSuites[key].testRegexp;
+        }
+
+        if (assertion.prototype && assertion.prototype.constructor) {
+            return filterSuites[key].testFunction;
+        }
+
+        if (assertion.key && assertion.value) {
+
+            if (assertion.value.prototype && assertion.value.prototype.constructor) {
+                return filterSuites[key].testKeyValueFn;
+            }
+
+            if (assertion.value.compile) {
+                return filterSuites[key].testKeyRegexp;
+            }
+
+            return filterSuites[key].testKeyValue;
+        }
+
+        return null;
+
+    };
 
     $.fn.where = function (filters) {
 
