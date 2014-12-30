@@ -9,70 +9,94 @@
 
     "use strict";
 
-    var fnGroupsObjectBuilder = function (testProp) {
-        this.testProp = testProp;
-    };
+    var sanitizes = {
+            lowerString: function (string) {
+                return string.toLowerCase();
+            }
+        },
+        sanitizeFn = function (sanitize, prop) {
+            return sanitize ? sanitize(prop) : prop;
+        },
+        jQueryTestGetter = function (testProp, sanitize) {
+            return function ($element, args) {
+                return sanitizeFn(sanitize, $element[testProp].apply($element, args ? [].concat(args) : []));
+            }
+        }, jQueryTestProp = function (testProp, sanitize) {
+            return function ($element) {
+                return sanitizeFn(sanitize, $element.prop(testProp));
+            }
+        }, fnGroupsObjectBuilder = function (testProp, options) {
+            var _options = options || {},
+                _testPropFn = null;
+
+            if (_options.prop) {
+                this.testPropFn = jQueryTestProp(testProp, _options.sanitize);
+            } else {
+                this.testPropFn = jQueryTestGetter(testProp, _options.sanitize);
+            }
+
+        };
 
     fnGroupsObjectBuilder.prototype.allowText = function () {
-        var testProp = this.testProp;
-        this.testString = function ($element, number) {
-            return $element[testProp]() === number;
+        var testPropFn = this.testPropFn;
+        this.testString = function ($element, text) {
+            return testPropFn($element) === text;
         };
         return this;
     };
 
     fnGroupsObjectBuilder.prototype.allowNumber = function () {
-        var testProp = this.testProp;
+        var testPropFn = this.testPropFn;
         this.testNumber = function ($element, number) {
-            return parseInt($element[testProp]()) === number;
+            return parseInt(testPropFn($element)) === number;
         };
         return this;
     };
 
     fnGroupsObjectBuilder.prototype.allowCount = function () {
-        var testProp = this.testProp;
+        var testPropFn = this.testPropFn;
         this.testNumber = function ($element, number) {
-            return $element[testProp]().length === number;
+            return testPropFn($element).length === number;
         };
         return this;
     };
 
     fnGroupsObjectBuilder.prototype.allowFunction = function () {
-        var testProp = this.testProp;
+        var testPropFn = this.testPropFn;
         this.testFunction = function ($element, fn) {
-            return fn($element[testProp]())
+            return fn(testPropFn($element))
         };
         return this;
     };
 
     fnGroupsObjectBuilder.prototype.allowRegex = function () {
-        var testProp = this.testProp;
+        var testPropFn = this.testPropFn;
         this.testRegexp = function ($element, regexp) {
-            return $element[testProp]().match(regexp);
+            return testPropFn($element).match(regexp);
         };
         return this;
     };
 
     fnGroupsObjectBuilder.prototype.allowKeyValue = function () {
-        var testProp = this.testProp;
+        var testPropFn = this.testPropFn;
         this.testKeyValue = function ($element, object) {
-            return $element[testProp](object.key) == object.value;
+            return testPropFn($element, object.key) == object.value;
         };
         return this;
     };
 
     fnGroupsObjectBuilder.prototype.allowKeyValueFunction = function () {
-        var testProp = this.testProp;
+        var testPropFn = this.testPropFn;
         this.testKeyValueFn = function ($element, object) {
-            return object.value($element[testProp](object.key));
+            return object.value(testPropFn($element, object.key));
         };
         return this;
     };
 
     fnGroupsObjectBuilder.prototype.allowKeyValueRegex = function () {
-        var testProp = this.testProp;
+        var testPropFn = this.testPropFn;
         this.testKeyRegexp = function ($element, object) {
-            return ("" + $element[testProp](object.key)).match(object.value)
+            return ("" + testPropFn($element, object.key)).match(object.value)
         };
         return this;
     };
@@ -90,7 +114,11 @@
         "data": new fnGroupsObjectBuilder("data").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex(),
         "children": new fnGroupsObjectBuilder("children").allowFunction().allowCount(),
         "siblings": new fnGroupsObjectBuilder("siblings").allowFunction().allowCount(),
-        "parents": new fnGroupsObjectBuilder("parents").allowFunction().allowCount()
+        "parents": new fnGroupsObjectBuilder("parents").allowFunction().allowCount(),
+        "tagName": new fnGroupsObjectBuilder("tagName", {
+            prop: true,
+            sanitize: sanitizes.lowerString
+        }).allowFunction().allowText().allowRegex()
     }, getAssertionFunction = function (key, assertion) {
 
         if (!key || !filterSuites[key]) {
