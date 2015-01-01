@@ -119,6 +119,7 @@
         "outerWidth": new fnGroupsObjectBuilder("outerWidth").allowNumber().allowFunction(),
         "innerWidth": new fnGroupsObjectBuilder("innerWidth").allowNumber().allowFunction(),
         "css": new fnGroupsObjectBuilder("css").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex(),
+        "prop": new fnGroupsObjectBuilder("prop").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex(),
         "data": new fnGroupsObjectBuilder("data").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex().allowKeyValueDef(),
         "attr": new fnGroupsObjectBuilder("attr").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex().allowKeyValueDef(),
         "children": new fnGroupsObjectBuilder("children").allowFunction().allowCount(),
