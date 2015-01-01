@@ -10,32 +10,32 @@
     "use strict";
 
     var sanitizes = {
-            lowerString: function (string) {
-                return string.toLowerCase();
-            }
-        },
-        sanitizeFn = function (sanitize, prop) {
-            return sanitize ? sanitize(prop) : prop;
-        },
-        jQueryTestGetter = function (testProp, sanitize) {
-            return function ($element, args) {
-                return sanitizeFn(sanitize, $element[testProp].apply($element, args ? [].concat(args) : []));
-            }
-        }, jQueryTestProp = function (testProp, sanitize) {
-            return function ($element) {
-                return sanitizeFn(sanitize, $element.prop(testProp));
-            }
-        }, fnGroupsObjectBuilder = function (testProp, options) {
-            var _options = options || {},
-                _testPropFn = null;
+        lowerString: function (string) {
+            return string.toLowerCase();
+        }
+    }, sanitizeFn = function (sanitize, prop) {
+        return sanitize ? sanitize(prop) : prop;
+    }, jQueryTestGetter = function (testProp, sanitize) {
+        return function ($element, args) {
+            return sanitizeFn(sanitize, $element[testProp].apply($element, args ? [].concat(args) : []));
+        }
+    }, jQueryTestProp = function (testProp, sanitize) {
+        return function ($element) {
+            return sanitizeFn(sanitize, $element.prop(testProp));
+        }
+    }, fnGroupsObjectBuilder = function (testProp, options) {
+        var _options = options || {},
+            _testPropFn = null;
 
-            if (_options.prop) {
-                this.testPropFn = jQueryTestProp(testProp, _options.sanitize);
-            } else {
-                this.testPropFn = jQueryTestGetter(testProp, _options.sanitize);
-            }
+        if (_options.prop) {
+            _testPropFn = jQueryTestProp(testProp, _options.sanitize);
+        } else {
+            _testPropFn = jQueryTestGetter(testProp, _options.sanitize);
+        }
 
-        };
+        this.testPropFn = _testPropFn;
+
+    };
 
     fnGroupsObjectBuilder.prototype.allowText = function () {
         var testPropFn = this.testPropFn;
@@ -101,6 +101,14 @@
         return this;
     };
 
+    fnGroupsObjectBuilder.prototype.allowKeyValueDef = function () {
+        var testPropFn = this.testPropFn;
+        this.testKeyBoolean = function ($element, object) {
+            return (testPropFn($element, object.key) !== (void 0)) === object.exists;
+        };
+        return this;
+    };
+
     var filterSuites = {
         "html": new fnGroupsObjectBuilder("html").allowFunction().allowText().allowRegex(),
         "text": new fnGroupsObjectBuilder("text").allowFunction().allowText().allowRegex(),
@@ -111,7 +119,8 @@
         "outerWidth": new fnGroupsObjectBuilder("outerWidth").allowNumber().allowFunction(),
         "innerWidth": new fnGroupsObjectBuilder("innerWidth").allowNumber().allowFunction(),
         "css": new fnGroupsObjectBuilder("css").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex(),
-        "data": new fnGroupsObjectBuilder("data").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex(),
+        "data": new fnGroupsObjectBuilder("data").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex().allowKeyValueDef(),
+        "attr": new fnGroupsObjectBuilder("attr").allowKeyValue().allowKeyValueFunction().allowKeyValueRegex().allowKeyValueDef(),
         "children": new fnGroupsObjectBuilder("children").allowFunction().allowCount(),
         "siblings": new fnGroupsObjectBuilder("siblings").allowFunction().allowCount(),
         "parents": new fnGroupsObjectBuilder("parents").allowFunction().allowCount(),
@@ -141,17 +150,25 @@
             return filterSuites[key].testFunction;
         }
 
-        if (assertion.key && assertion.value) {
+        if (assertion.key) {
 
-            if (assertion.value.prototype && assertion.value.prototype.constructor) {
-                return filterSuites[key].testKeyValueFn;
+            if (assertion.value) {
+
+                if (assertion.value.prototype && assertion.value.prototype.constructor) {
+                    return filterSuites[key].testKeyValueFn;
+                }
+
+                if (assertion.value.compile) {
+                    return filterSuites[key].testKeyRegexp;
+                }
+
+                return filterSuites[key].testKeyValue;
+
             }
 
-            if (assertion.value.compile) {
-                return filterSuites[key].testKeyRegexp;
+            if (assertion.exists === false || assertion.exists === true) {
+                return filterSuites[key].testKeyBoolean
             }
-
-            return filterSuites[key].testKeyValue;
         }
 
         return null;

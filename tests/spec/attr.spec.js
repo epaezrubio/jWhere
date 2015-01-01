@@ -2,30 +2,30 @@
 
     "use strict";
 
-    QUnit.module("data");
-    QUnit.test("should accept key/value, key/regex key/function", function (assert) {
+    QUnit.module("attr");
+    QUnit.test("should accept key/value, key/regex key/function, key/boolean", function (assert) {
         var $elem = $("<div>");
 
         $elem.where({
-            data: {
+            attr: {
                 key: "foo",
                 value: "var"
             }
         });
 
-        assert.ok(true, "data accepts key/value");
+        assert.ok(true, "attr accepts key/value");
 
         $elem.where({
-            data: {
+            attr: {
                 key: "foo",
                 value: new RegExp("\\w+")
             }
         });
 
-        assert.ok(true, "data accepts key/regexp");
+        assert.ok(true, "attr accepts key/regexp");
 
         $elem.where({
-            data: {
+            attr: {
                 key: "foo",
                 value: function (value) {
                     return true;
@@ -33,7 +33,16 @@
             }
         });
 
-        assert.ok(true, "data accepts key/function");
+        assert.ok(true, "attr accepts key/function");
+
+        $elem.where({
+            attr: {
+                key: "foo",
+                value: true
+            }
+        });
+
+        assert.ok(true, "attr accepts key/boolean");
 
     });
 
@@ -49,11 +58,11 @@
 
         var $elems = $("<div>").html(html).find("li");
 
-        $elems.eq(0).data("foo", "bar");
-        $elems.eq(2).data("foo", "foo");
+        $elems.eq(0).attr("foo", "bar");
+        $elems.eq(2).attr("foo", "foo");
 
         var $items = $elems.where({
-            data: {
+            attr: {
                 key: "foo",
                 value: "bar"
             }
@@ -75,12 +84,12 @@
 
         var $elems = $("<div>").html(html).find("li");
 
-        $elems.eq(0).data("foo", "bar");
-        $elems.eq(1).data("foo", "bars");
-        $elems.eq(2).data("foo", "foo");
+        $elems.eq(0).attr("foo", "bar");
+        $elems.eq(1).attr("foo", "bars");
+        $elems.eq(2).attr("foo", "foo");
 
         var $items = $elems.where({
-            data: {
+            attr: {
                 key: "foo",
                 value: new RegExp("ba\\w{1,2}")
             }
@@ -94,29 +103,27 @@
 
         var html = "" +
             "<div>" +
-            "<a>Item 1</a>" +
+            "<a href=''>Item 1</a>" +
             "<a>Item 2</a>" +
             "</div>";
 
         var $elems = $("<div>").html(html).find("a");
-        $elems.eq(0).data("foo", "bar");
 
-        var $hasData = $elems.where({
-            data: {
-                key: "foo",
+        var $hasAttr = $elems.where({
+            attr: {
+                key: "href",
                 exists: true
             }
-        }), $hasNoData = $elems.where({
-            data: {
-                key: "foo",
+        }), $hasNoAttr = $elems.where({
+            attr: {
+                key: "href",
                 exists: false
             }
         });
 
-        assert.equal($hasData.html(), "Item 1");
-        assert.equal($hasNoData.html(), "Item 2");
+        assert.equal($hasAttr.html(), "Item 1");
+        assert.equal($hasNoAttr.html(), "Item 2");
 
     });
-
 
 }(jQuery));
