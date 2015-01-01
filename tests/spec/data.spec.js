@@ -3,7 +3,7 @@
     "use strict";
 
     QUnit.module("data");
-    QUnit.test("should accept key/value, key/regex key/function", function (assert) {
+    QUnit.test("should accept key/value, key/regex key/function, key/boolean", function (assert) {
         var $elem = $("<div>");
 
         $elem.where({
@@ -34,6 +34,15 @@
         });
 
         assert.ok(true, "data accepts key/function");
+
+        $elem.where({
+            data: {
+                key: "foo",
+                value: true
+            }
+        });
+
+        assert.ok(true, "data accepts key/boolean");
 
     });
 
